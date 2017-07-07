@@ -55,6 +55,8 @@ Better than RESTful API; REST really shouldn't be used for serverside programmin
 
 ?? Open source IRC readily available on github? 
 
+This is intresting, but if one is trying to write IRC and the solution is to use existing IRC, there is something mildly tautological about the whole business 
+
 ## To Be Resolved
 - Federation
 - fully spec the protocol
