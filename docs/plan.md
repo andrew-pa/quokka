@@ -47,10 +47,15 @@ User ids with different specified hostname
 
 Server proxies message to other server? Or does client handle sending to different hosts?
 
+## IRC
+
+Use an IRC to facilitate exchange of messages between clients
+
+Better than RESTful API; REST really shouldn't be used for serverside programming, as the client is constantly pulling from the server 
+
+?? Open source IRC readily available on github? 
 
 ## To Be Resolved
-
-- REST API vs raw TCP
 - Federation
 - fully spec the protocol
 - Group messages? should be easy; it's just a special entity
