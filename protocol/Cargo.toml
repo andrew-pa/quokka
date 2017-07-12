@@ -1,13 +1,15 @@
 [package]
-name = "server"
+name = "protocol"
 version = "0.1.0"
-authors = ["Andrew Palmer"]
+authors = ["Andrew Palmer <andrew.pa@outlook.com>"]
 
 [dependencies]
+bytes = "0.4"
 futures = "0.1"
 tokio-core = "0.1"
 tokio-io = "0.1"
 tokio-proto = "0.1"
 tokio-service = "0.1"
-protocol = { path = "../protocol" }
-
+serde = "1.0"
+serde_derive = "1.0"
+bincode = "0.8"

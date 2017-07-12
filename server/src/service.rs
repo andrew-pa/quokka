@@ -3,7 +3,7 @@ use std::io::Error as IOError;
 use futures::{future, Future, BoxFuture};
 use tokio_service::Service;
 
-use proto::{Request, Response};
+use protocol::{Request, Response};
 
 pub struct IMService;
 
