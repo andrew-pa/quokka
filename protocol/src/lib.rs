@@ -18,7 +18,7 @@ use tokio_io::codec::{Framed, Decoder, Encoder};
 use tokio_proto::pipeline::ServerProto;
 use std::io::{Error as IOError, ErrorKind as IOErrorKind};
 
-use bincode::{serialize, deserialize, Infinite};
+use bincode::{serialize, serialized_size, deserialize, Infinite};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Request {
@@ -39,12 +39,50 @@ impl Decoder for IMCodec {
     type Item = Request;
     type Error = IOError;
     fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error> {
-        deserialize(&src).map(Some).map_err(|e| IOError::new(IOErrorKind::Other, e))
+        if src.len() == 0 { return Ok(None); }
+        let der: Result<Request,_> = deserialize(src);
+        println!("decode {:?} [ {:?} ]", der, src);
+        match der {
+            Ok(v) => {
+                src.split_to(serialized_size(&v) as usize); //consume bytes
+                Ok(Some(v))
+            },
+            Err(e) => Err(IOError::new(IOErrorKind::Other, e))
+        }
     }
 }
 
 impl Encoder for IMCodec {
     type Item = Response;
+    type Error = IOError;
+    fn encode(&mut self, item: Self::Item, dest: &mut BytesMut) -> Result<(), Self::Error> {
+        serialize(&item, Infinite)
+            .and_then(|v| Ok(dest.extend(v)))
+            .map_err(|e| IOError::new(IOErrorKind::Other, e))
+    }
+}
+
+pub struct IMClientCodec;
+
+impl Decoder for IMClientCodec {
+    type Item = Response;
+    type Error = IOError;
+    fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error> {
+        if src.len() == 0 { return Ok(None); }
+        let der: Result<Response,_> = deserialize(src);
+        println!("decode {:?} [ {:?} ]", der, src);
+        match der {
+            Ok(v) => {
+                src.split_to(serialized_size(&v) as usize); //consume bytes
+                Ok(Some(v))
+            },
+            Err(e) => Err(IOError::new(IOErrorKind::Other, e))
+        }
+    }
+}
+
+impl Encoder for IMClientCodec {
+    type Item = Request;
     type Error = IOError;
     fn encode(&mut self, item: Self::Item, dest: &mut BytesMut) -> Result<(), Self::Error> {
         serialize(&item, Infinite)
